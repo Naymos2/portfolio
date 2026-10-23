@@ -50,6 +50,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .cursor.link { width: 44px; height: 44px; margin: -22px 0 0 -22px; background: rgba(217, 88, 59, .25); }
 .cursor.big { width: 92px; height: 92px; margin: -46px 0 0 -46px; }
 .cursor.big span { opacity: 1; }
+.cursor.big.sm { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
+.cursor.big.sm span { font-size: .65rem; }
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 @media (hover: hover) and (pointer: fine) { body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; } }
 

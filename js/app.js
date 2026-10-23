@@ -81,11 +81,11 @@
         <h1 class="mega name" id="name">${ln('Charles', .1)}${ln('Surleraux', .22)}</h1>
         <p class="hero-sub rv" style="--d:.7s">${t(U.heroSub)}</p>
         <span class="sticker-hint rv" style="left:12%;top:36%;--d:1.2s">${t(U.hint)}</span>
-        <button class="sticker s-terracotta" style="left:6%;top:24%;transform:rotate(-8deg)" data-cursor="${t(U.cursorDrag)}">Photo</button>
-        <button class="sticker s-honey" style="left:34%;top:19%;transform:rotate(5deg)" data-cursor="${t(U.cursorDrag)}">Vidéo</button>
-        <button class="sticker" style="left:20%;top:48%;transform:rotate(-3deg)" data-cursor="${t(U.cursorDrag)}">Social</button>
-        <button class="sticker s-sage" style="left:46%;top:42%;transform:rotate(9deg)" data-cursor="${t(U.cursorDrag)}">Print</button>
-        <button class="sticker s-honey" style="left:60%;top:30%;transform:rotate(-6deg)" data-cursor="${t(U.cursorDrag)}">IA ✺</button>
+        <button class="sticker s-terracotta" style="left:6%;top:24%;transform:rotate(-8deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Photo</button>
+        <button class="sticker s-honey" style="left:34%;top:19%;transform:rotate(5deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Vidéo</button>
+        <button class="sticker" style="left:20%;top:48%;transform:rotate(-3deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Social</button>
+        <button class="sticker s-sage" style="left:46%;top:42%;transform:rotate(9deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Print</button>
+        <button class="sticker s-honey" style="left:60%;top:30%;transform:rotate(-6deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">IA ✺</button>
         <span class="scroll-hint">${t(U.scroll)}</span>
       </section>
 
@@ -336,6 +336,7 @@
       const d = e.target.closest('[data-cursor]');
       const l = e.target.closest('a,button');
       cur.classList.toggle('big', !!d);
+      cur.classList.toggle('sm', !!d && d.dataset.cursorSize === 's');
       cur.classList.toggle('link', !d && !!l);
       $('span', cur).textContent = d ? d.dataset.cursor : '';
     });
