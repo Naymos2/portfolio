@@ -80,7 +80,7 @@
         <div class="hero-photo rv" style="--d:.5s"><img src="${C.site.photo}" alt="${C.site.name}"></div>
         <h1 class="mega name" id="name">${ln('Charles', .1)}${ln('Surleraux', .22)}</h1>
         <p class="hero-sub rv" style="--d:.7s">${t(U.heroSub)}</p>
-        <span class="sticker-hint rv" style="left:12%;top:36%;--d:1.2s">${t(U.hint)}</span>
+        <span class="sticker-hint rv" style="left:9%;top:17.5%;--d:1.2s">${t(U.hint)}</span>
         <button class="sticker s-terracotta" style="left:6%;top:24%;transform:rotate(-8deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Photo</button>
         <button class="sticker s-honey" style="left:34%;top:19%;transform:rotate(5deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Vidéo</button>
         <button class="sticker" style="left:20%;top:48%;transform:rotate(-3deg)" data-cursor="${t(U.cursorDrag)}" data-cursor-size="s">Social</button>
