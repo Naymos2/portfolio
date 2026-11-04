@@ -94,17 +94,64 @@ window.C = {
   /* tone : terracotta | honey | sage | ink | cream  (couleur du placeholder) */
   projects: [
     {
-      slug: "cosmetique", featured: true, cat: ["video", "social"], tone: "terracotta", year: "2026",
+      slug: "cosmetique", featured: true, cat: ["video", "photo", "social"], tone: "terracotta", year: "2026",
       cover: "assets/projets/cosmetique/cover.jpg",
-      video: "assets/projets/cosmetique/video.mp4",
-      gallery: ["assets/projets/cosmetique/still-1.jpg", "assets/projets/cosmetique/still-2.jpg", "assets/projets/cosmetique/still-3.jpg"],
-      title: { fr: "Première production cosmétique", en: "First cosmetics production" },
-      line: { fr: "Une immersion en vidéo sur la ligne, de l'entrée de l'Atelier jusqu'au remplissage.", en: "A video immersion on the production line, from the Atelier's entrance to the filling machine." },
-      role: { fr: "Tournage, montage", en: "Shooting, editing" },
-      tools: "Premiere Pro",
-      text: {
-        fr: ["Une vidéo verticale de 1 min 17 pour raconter la première production cosmétique de l'Atelier, au plus près des machines et des équipes.", "Format 9:16 pensé pour les réseaux sociaux, avec des plans serrés sur la ligne de remplissage."],
-        en: ["A 1 min 17 vertical video telling the story of the Atelier's first cosmetics production, close to the machines and the teams.", "9:16 format designed for social media, with close-ups of the filling line."]
+      title: { fr: "Du chantier au flacon", en: "From site to bottle" },
+      line: { fr: "L'histoire d'un atelier cosmétique, racontée de l'espace vide au premier flacon.", en: "The story of a cosmetics workshop, told from an empty space to the first bottle." },
+      role: { fr: "Photo, vidéo, montage, déclinaisons réseaux", en: "Photo, video, editing, social media versions" },
+      tools: "Premiere Pro, Remotion",
+      story: {
+        intro: {
+          fr: ["Au départ, il n'y a qu'un grand espace vide dans le Hainaut. Quelques mois plus tard, des flacons avancent sur une ligne de remplissage.", "Entre les deux, l'Atelier Jean Regniers a créé une activité toute neuve : la production cosmétique. Mon travail a été de rendre cette histoire visible, en la suivant du chantier jusqu'aux personnes qui la font vivre."],
+          en: ["It starts with a big empty space in Hainaut. A few months later, bottles are moving along a filling line.", "In between, Atelier Jean Regniers created a brand new activity: cosmetics production. My job was to make that story visible, following it from the construction site to the people who bring it to life."]
+        },
+        stats: [
+          { value: "8 500+", label: { fr: "images de chantier", en: "construction images" } },
+          { value: "3", label: { fr: "vidéos, un seul récit", en: "videos, one story" } },
+          { value: "4", label: { fr: "réseaux sociaux", en: "social networks" } },
+          { value: "3", label: { fr: "langues de sous-titres", en: "subtitle languages" } }
+        ],
+        chapters: [
+          {
+            kicker: { fr: "Le chantier", en: "The site" },
+            title: { fr: "Rendre visible ce qui change lentement.", en: "Showing what changes slowly." },
+            text: {
+              fr: ["Un chantier se transforme trop lentement pour qu'on le voie à l'œil nu. Alors l'appareil a suivi les travaux, image après image.", "Plus de 8 500 images sont condensées en 1 min 14. Le film part d'une vue aérienne du site, puis avance par étapes titrées : préparation de l'espace, aménagement, stockage, jusqu'à la production. Tout l'enjeu était de garder le fil pour qu'on comprenne ce qu'on regarde."],
+              en: ["A construction site changes too slowly to see with the naked eye. So the camera followed the works, frame after frame.", "More than 8,500 images are condensed into 1 min 14. The film opens on an aerial view of the site, then moves through titled stages: preparing the space, fitting it out, storage, all the way to production. The challenge was keeping a clear thread, so viewers understand what they are watching."]
+            },
+            video: "assets/projets/cosmetique/timelapse.mp4", poster: "assets/projets/cosmetique/poster-timelapse.jpg", format: "wide"
+          },
+          {
+            kicker: { fr: "La production", en: "The production" },
+            title: { fr: "Le jour où la ligne se met en route.", en: "The day the line starts up." },
+            text: {
+              fr: ["Une fois l'atelier terminé, l'histoire change de rythme. Ce ne sont plus des murs qui avancent, mais des flacons.", "Cette vidéo verticale de 1 min 17 entre dans la salle pour la première production. Les plans sont serrés sur les gestes, les tuyaux et la ligne de remplissage, pour donner la sensation d'être sur place, sur un écran de téléphone."],
+              en: ["Once the workshop is finished, the story changes pace. It is no longer walls moving forward, but bottles.", "This 1 min 17 vertical video steps into the room for the first production. Tight shots stay on the hands, the pipes and the filling line, to give the feeling of being there, on a phone screen."]
+            },
+            video: "assets/projets/cosmetique/video.mp4", poster: "assets/projets/cosmetique/cover.jpg", format: "tall"
+          },
+          {
+            kicker: { fr: "La voix", en: "The voice" },
+            title: { fr: "Derrière les machines, il fallait un visage.", en: "Behind the machines, it needed a face." },
+            text: {
+              fr: ["Il manquait quelqu'un pour expliquer ce qu'on voyait. Élodie Clément, cosmétologue de l'Atelier et pharmacienne de formation, raconte son métier : la qualité, la sécurité, les tests et les étapes de fabrication.", "Une interview de 17 minutes devient un film de 2 min 20. Les sous-titres suivent sa voix mot à mot, et des repères visuels (pH, viscosité, stabilité, étapes de fabrication) rendent un sujet technique facile à suivre."],
+              en: ["Someone had to explain what we were seeing. Élodie Clément, the Atelier's cosmetologist and a trained pharmacist, talks about her job: quality, safety, testing and the manufacturing steps.", "A 17-minute interview becomes a 2 min 20 film. Subtitles follow her voice word by word, and visual cues (pH, viscosity, stability, manufacturing steps) make a technical subject easy to follow."]
+            },
+            video: { fr: "assets/projets/cosmetique/interview-fr.mp4", en: "assets/projets/cosmetique/interview-en.mp4" }, poster: "assets/projets/cosmetique/poster-interview.jpg", format: "portrait",
+            quote: { fr: "Le reflet d'un travail de qualité, d'un travail de précision.", en: "A reflection of quality work, of precision work." }
+          },
+          {
+            kicker: { fr: "La diffusion", en: "The rollout" },
+            title: { fr: "Une histoire, adaptée à chaque réseau.", en: "One story, adapted to each network." },
+            text: {
+              fr: ["On ne regarde pas LinkedIn comme TikTok. L'interview a donc été remontée pour chaque réseau : courte et directe en vertical pour TikTok et Instagram, plus posée en 4:5 pour Facebook et LinkedIn.", "Chaque version a aussi ses sous-titres en français, en anglais et en néerlandais."],
+              en: ["Nobody watches LinkedIn the way they watch TikTok. So the interview was re-edited for each network: short and direct in vertical for TikTok and Instagram, calmer in 4:5 for Facebook and LinkedIn.", "Each version also has its own subtitles in French, English and Dutch."]
+            },
+            images: ["assets/projets/cosmetique/still-1.jpg", "assets/projets/cosmetique/still-2.jpg", "assets/projets/cosmetique/still-3.jpg"]
+          }
+        ],
+        closing: { fr: "On a toutes les cartes en main pour réussir.", en: "We have every card in hand to succeed." },
+        closingBy: { fr: "Élodie Clément, cosmétologue à l'Atelier Jean Regniers", en: "Élodie Clément, cosmetologist at Atelier Jean Regniers" }
       }
     },
     {
@@ -119,17 +166,6 @@ window.C = {
       }
     },
     {
-      slug: "chantier", featured: true, cat: ["video", "photo"], tone: "sage", year: "2026",
-      title: { fr: "Timelapse du chantier", en: "Construction timelapse" },
-      line: { fr: "Plusieurs mois de chantier condensés en quelques secondes.", en: "Several months of construction condensed into a few seconds." },
-      role: { fr: "Prise de vue, montage", en: "Photography, editing" },
-      tools: "Premiere Pro, Lightroom",
-      text: {
-        fr: ["Suivi photo régulier d'un chantier de l'Atelier, de l'avant-travaux à la fin, assemblé en timelapse.", "Un exercice de patience et de régularité qui rend visible une transformation lente."],
-        en: ["Regular photo tracking of an Atelier construction site, from before the works to the finish, assembled into a timelapse.", "An exercise in patience and consistency that makes a slow transformation visible."]
-      }
-    },
-    {
       slug: "photos-produit", cat: ["photo"], tone: "cream", year: "2026",
       title: { fr: "Photos produit", en: "Product photography" },
       line: { fr: "Des produits mis en valeur, simplement et proprement.", en: "Products shown at their best, simply and cleanly." },
@@ -141,7 +177,7 @@ window.C = {
       }
     },
     {
-      slug: "reseaux", cat: ["social"], tone: "terracotta", year: "2026",
+      slug: "reseaux", featured: true, cat: ["social"], tone: "sage", year: "2026",
       title: { fr: "Lancement Instagram & TikTok", en: "Instagram & TikTok launch" },
       line: { fr: "Deux nouveaux comptes, proposés puis lancés de zéro.", en: "Two new accounts, proposed then launched from scratch." },
       role: { fr: "Stratégie, contenus, publication", en: "Strategy, content, publishing" },

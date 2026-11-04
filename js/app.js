@@ -138,6 +138,7 @@
     if (i < 0) return notFound();
     const p = C.projects[i];
     const nx = C.projects[(i + 1) % C.projects.length];
+    if (p.story) return storyView(p, nx);
     const gallery = p.gallery && p.gallery.length ? p.gallery : [null, null, null];
     return `
       <article class="page">
@@ -159,6 +160,47 @@
           <div class="rv">${t(p.text).map((x) => `<p>${x}</p>`).join('')}<small>${t(U.draft)}</small></div>
         </div>
         <div class="pd-gal ${p.video ? 'pd-gal--v' : ''}">${gallery.map((g) => `<div class="rv">${visual(p, null, g)}</div>`).join('')}</div>
+        <a class="next" href="#/projet/${nx.slug}" data-cursor="${t(U.cursorView)}">
+          <p class="eyebrow">${t(U.next)}</p>
+          <h2 class="mega">${t(nx.title)} →</h2>
+        </a>
+      </article>
+      ${footer()}`;
+  }
+
+  function storyView(p, nx) {
+    const S = p.story;
+    const media = (c) => {
+      if (c.images) return `<div class="ch-images">${c.images.map((g) => `<div class="rv"><img src="${g}" alt="" loading="lazy"></div>`).join('')}</div>`;
+      return `<div class="ch-media ch-media--${c.format} rv"><video src="${t(c.video)}" poster="${c.poster}" controls playsinline preload="metadata"></video></div>`;
+    };
+    const chapters = S.chapters.map((c, i) => `
+      <section class="ch ${c.format === 'wide' || c.images ? 'ch--wide' : ''}">
+        <div class="ch-text">
+          <p class="ch-kicker rv"><b>0${i + 1}</b>${t(c.kicker)}</p>
+          <h2 class="rv">${t(c.title)}</h2>
+          <div class="rv">${t(c.text).map((x) => `<p>${x}</p>`).join('')}</div>
+          ${c.quote ? `<blockquote class="rv">« ${t(c.quote)} »</blockquote>` : ''}
+        </div>
+        ${media(c)}
+      </section>`).join('');
+    return `
+      <article class="page story">
+        <div class="st-progress" id="st-progress"></div>
+        <div class="pd-head">
+          <a class="back" href="#/projets">${t(U.back)}</a>
+          <h1 class="mega">${ln(t(p.title))}</h1>
+        </div>
+        <dl class="pd-meta rv">
+          <div><dt>${t(U.meta.client)}</dt><dd>Atelier Jean Regniers</dd></div>
+          <div><dt>${t(U.meta.role)}</dt><dd>${t(p.role)}</dd></div>
+          <div><dt>${t(U.meta.year)}</dt><dd>${p.year}</dd></div>
+          <div><dt>${t(U.meta.tools)}</dt><dd>${p.tools}</dd></div>
+        </dl>
+        <div class="st-intro">${t(S.intro).map((x) => `<p class="rv">${x}</p>`).join('')}</div>
+        <ul class="st-stats">${S.stats.map((x) => `<li class="rv"><b>${x.value}</b>${t(x.label)}</li>`).join('')}</ul>
+        ${chapters}
+        <div class="st-closing"><p class="rv">« ${t(S.closing)} »</p><small class="rv">${t(S.closingBy)}</small></div>
         <a class="next" href="#/projet/${nx.slug}" data-cursor="${t(U.cursorView)}">
           <p class="eyebrow">${t(U.next)}</p>
           <h2 class="mega">${t(nx.title)} →</h2>
@@ -224,6 +266,7 @@
     initReveal();
     if (route.name === '') { initStickers(); initStack(); requestAnimationFrame(() => $('#name') && $('#name').classList.add('in')); }
     if (route.name === 'projets') initFilters();
+    if ($('#st-progress')) initProgress();
   }
 
   let busy = false;
@@ -267,6 +310,16 @@
     if (io) io.disconnect();
     io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
     $$('.rv, .page-head .ln, .pd-head .ln').forEach((el) => io.observe(el));
+  }
+
+  /* ---------- story: progress bar ---------- */
+  function initProgress() {
+    const bar = $('#st-progress');
+    onScroll = () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+    };
+    onScroll();
   }
 
   /* ---------- stack (3 overlapping panels) ---------- */
@@ -355,6 +408,11 @@
     const a = e.target.closest('a[href^="#/"]');
     if (a && a.getAttribute('href') === location.hash) e.preventDefault();
   });
+
+  /* une seule vidéo à la fois */
+  document.addEventListener('play', (e) => {
+    $$('video').forEach((v) => { if (v !== e.target) v.pause(); });
+  }, true);
 
   window.addEventListener('hashchange', () => navigate(false));
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
