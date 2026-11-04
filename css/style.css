@@ -203,6 +203,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .pd-gal > div { border-radius: 24px; overflow: hidden; aspect-ratio: 4/5; }
 .pd-gal > div:first-child { grid-column: 1 / -1; aspect-ratio: 16/9; }
 .pd-gal img { width: 100%; height: 100%; object-fit: cover; }
+.pd-video { margin: clamp(24px, 4vw, 56px) var(--gut) 0; padding: clamp(20px, 4vw, 56px); border-radius: 32px; display: flex; justify-content: center; background: var(--bg2); }
+.pd-video.p-terracotta { background: var(--accent); }
+.pd-video.p-honey { background: var(--honey); }
+.pd-video.p-sage { background: var(--sage); }
+.pd-video video { display: block; height: min(78svh, 760px); max-width: 100%; aspect-ratio: 9/16; border-radius: 20px; background: var(--ink); }
+.pd-gal--v { grid-template-columns: repeat(3, 1fr); }
+.pd-gal--v > div, .pd-gal--v > div:first-child { grid-column: auto; aspect-ratio: 9/16; }
 .next { display: block; background: var(--ink); color: var(--bg); border-radius: 40px 40px 0 0; padding: clamp(50px, 8vw, 110px) var(--gut); }
 .next .eyebrow { opacity: .7; }
 .next h2 { font-size: clamp(2.6rem, 9vw, 9rem); margin: 1.2rem 0 0; transition: transform .6s var(--ease), color .3s; }

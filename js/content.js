@@ -22,7 +22,6 @@ window.C = {
       about: { fr: "À propos", en: "About" },
       contact: { fr: "Contact", en: "Contact" }
     },
-    avail: { fr: "Disponible · Freelance & opportunités", en: "Available · Freelance & opportunities" },
     heroSub: {
       fr: "Créatif & communication. Photo, vidéo et réseaux sociaux : des contenus chaleureux qui racontent les gens et les métiers.",
       en: "Creative & communication. Photo, video and social media: warm content that tells the story of people and crafts."
@@ -96,13 +95,16 @@ window.C = {
   projects: [
     {
       slug: "cosmetique", featured: true, cat: ["video", "social"], tone: "terracotta", year: "2026",
+      cover: "assets/projets/cosmetique/cover.jpg",
+      video: "assets/projets/cosmetique/video.mp4",
+      gallery: ["assets/projets/cosmetique/still-1.jpg", "assets/projets/cosmetique/still-2.jpg", "assets/projets/cosmetique/still-3.jpg"],
       title: { fr: "Première production cosmétique", en: "First cosmetics production" },
-      line: { fr: "Un reel vertical autour d'Elodie et de la naissance d'une gamme.", en: "A vertical reel around Elodie and the birth of a product line." },
-      role: { fr: "Tournage, montage, motion", en: "Shooting, editing, motion" },
-      tools: "Premiere Pro, Photoshop",
+      line: { fr: "Une immersion en vidéo sur la ligne, de l'entrée de l'Atelier jusqu'au remplissage.", en: "A video immersion on the production line, from the Atelier's entrance to the filling machine." },
+      role: { fr: "Tournage, montage", en: "Shooting, editing" },
+      tools: "Premiere Pro",
       text: {
-        fr: ["Réalisation d'une vidéo présentant la première production cosmétique de l'Atelier, avec l'interview d'Elodie au cœur du récit.", "Format vertical 9:16 pensé pour Instagram et TikTok, aux couleurs de la charte de l'Atelier."],
-        en: ["A video presenting the Atelier's first cosmetics production, with an interview with Elodie at the heart of the story.", "Vertical 9:16 format designed for Instagram and TikTok, in the Atelier's brand colours."]
+        fr: ["Une vidéo verticale de 1 min 17 pour raconter la première production cosmétique de l'Atelier, au plus près des machines et des équipes.", "Format 9:16 pensé pour les réseaux sociaux, avec des plans serrés sur la ligne de remplissage."],
+        en: ["A 1 min 17 vertical video telling the story of the Atelier's first cosmetics production, close to the machines and the teams.", "9:16 format designed for social media, with close-ups of the filling line."]
       }
     },
     {

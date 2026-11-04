@@ -76,7 +76,6 @@
 
     return `
       <section class="hero" id="hero">
-        <p class="eyebrow rv" style="--d:.9s"><span class="dot"></span>${t(U.avail)}</p>
         <div class="hero-photo rv" style="--d:.5s"><img src="${C.site.photo}" alt="${C.site.name}"></div>
         <h1 class="mega name" id="name">${ln('Charles', .1)}${ln('Surleraux', .22)}</h1>
         <p class="hero-sub rv" style="--d:.7s">${t(U.heroSub)}</p>
@@ -152,12 +151,14 @@
           <div><dt>${t(U.meta.year)}</dt><dd>${p.year}</dd></div>
           <div><dt>${t(U.meta.tools)}</dt><dd>${p.tools}</dd></div>
         </dl>
-        <div class="pd-cover rv"><div>${visual(p, '16/9', p.cover)}</div></div>
+        ${p.video
+          ? `<div class="pd-video p-${p.tone} rv"><video src="${p.video}" poster="${p.cover}" controls playsinline preload="metadata"></video></div>`
+          : `<div class="pd-cover rv"><div>${visual(p, '16/9', p.cover)}</div></div>`}
         <div class="pd-text">
           <h2 class="rv">${t(p.line)}</h2>
           <div class="rv">${t(p.text).map((x) => `<p>${x}</p>`).join('')}<small>${t(U.draft)}</small></div>
         </div>
-        <div class="pd-gal">${gallery.map((g) => `<div class="rv">${visual(p, null, g)}</div>`).join('')}</div>
+        <div class="pd-gal ${p.video ? 'pd-gal--v' : ''}">${gallery.map((g) => `<div class="rv">${visual(p, null, g)}</div>`).join('')}</div>
         <a class="next" href="#/projet/${nx.slug}" data-cursor="${t(U.cursorView)}">
           <p class="eyebrow">${t(U.next)}</p>
           <h2 class="mega">${t(nx.title)} →</h2>
