@@ -45,13 +45,12 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ---------- Cursor ---------- */
 .cursor { position: fixed; left: 0; top: 0; z-index: 90; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--accent); pointer-events: none; display: grid; place-items: center; transition: width .3s var(--ease), height .3s var(--ease), margin .3s var(--ease), background .3s; opacity: 0; }
-.cursor span { font-size: .8rem; font-weight: 600; color: var(--bg); opacity: 0; transition: opacity .2s; }
+.cursor span { position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%); padding: .2rem .65rem; border-radius: 999px; background: var(--ink); color: var(--bg); border: 1px solid rgba(244, 237, 227, .35); font-size: .75rem; font-weight: 600; white-space: nowrap; opacity: 0; transition: opacity .2s; }
 .cursor.show { opacity: 1; }
-.cursor.link { width: 44px; height: 44px; margin: -22px 0 0 -22px; background: rgba(217, 88, 59, .25); }
-.cursor.big { width: 92px; height: 92px; margin: -46px 0 0 -46px; }
+.cursor.link { width: 26px; height: 26px; margin: -13px 0 0 -13px; background: rgba(217, 88, 59, .25); }
+.cursor.big { box-shadow: 0 0 0 2px var(--bg); }
 .cursor.big span { opacity: 1; }
-.cursor.big.sm { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
-.cursor.big.sm span { font-size: .65rem; }
+.cursor.flip span { left: auto; right: calc(100% + 8px); }
 @media (hover: none), (pointer: coarse) { .cursor { display: none; } }
 @media (hover: hover) and (pointer: fine) { body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: none; } }
 
