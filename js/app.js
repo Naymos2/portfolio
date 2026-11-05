@@ -42,17 +42,30 @@
 
   function footer() {
     const links = Object.entries(C.site.links).map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join('');
+    const tones = ['accent', 'honey', 'sage', 'ink'];
+    const tops = [62, 100, 44, 78, 92, 54, 100, 70, 40, 88, 60, 100, 48, 76];
+    const cols = tops.map((h, i) => `<span class="c-${tones[(i * 3 + (i >> 2)) % 4]}" style="height:${h}%"></span>`).join('');
+    const lines = t(U.contactLines);
+    const pile = [['s-terracotta', 'Photo'], ['s-honey', 'Vidéo'], ['', 'Social'], ['s-sage', 'Print'], ['s-honey', 'IA ✺']]
+      .map(([c, w]) => `<button class="sticker ${c}" data-cursor="${t(U.cursorDrag)}">${w}</button>`).join('');
     return `
+      <div class="foot-wrap">
+      <div class="foot-cols" aria-hidden="true">${cols}</div>
       <footer class="foot" id="contact">
         <p class="eyebrow rv"><span class="dot"></span>${t(U.contactEyebrow)}</p>
-        <h2 class="mega rv">${t(U.contactTitle)}<br><em>${t(U.contactTitle2)}</em></h2>
+        <h2 class="mega rv" aria-label="${lines[0]} ${t(U.contactTitle2)}"><span class="tw" aria-hidden="true"><span class="tw-text">${lines[0]}</span><i class="tw-caret"></i></span><br><em aria-hidden="true">${t(U.contactTitle2)}</em></h2>
         <div class="foot-row">
-          <a class="foot-mail" href="mailto:${C.site.email}">${C.site.email}</a>
+          <div class="foot-copy">
+            <button class="foot-mail" data-cursor="${t(U.copy)}">${C.site.email}</button>
+            <span class="copied" role="status"></span>
+          </div>
           <a class="circle" href="mailto:${C.site.email}" data-cursor="@">${t(U.write)}</a>
         </div>
         <div class="foot-links">${links}</div>
         <div class="foot-bottom"><span>${t(U.rights)}</span><button data-top>${t(U.top)}</button></div>
-      </footer>`;
+        <div class="foot-pile">${pile}</div>
+      </footer>
+      </div>`;
   }
 
   /* ---------- views ---------- */
@@ -277,6 +290,7 @@
     if (route.name === '') { initStickers(); initStack(); initIntro(); requestAnimationFrame(() => $('#name') && $('#name').classList.add('in')); }
     if (route.name === 'projets') initFilters();
     if ($('#st-progress')) initProgress();
+    initFooter();
   }
 
   let busy = false;
@@ -416,6 +430,167 @@
     onScroll = () => { if (prev) prev(); update(); };
   }
 
+  /* ---------- footer : colonnes, texte raturé, mail, stickers ---------- */
+  function initFooter() {
+    const foot = $('.foot');
+    if (!foot) return;
+    const cols = $$('.foot-cols span');
+    const box = $('.foot-cols');
+    const delays = cols.map((_, i) => ((i * 7) % 11) / 22);
+    const rise = () => {
+      const r = box.getBoundingClientRect();
+      const k = reduce ? 1 : clamp01((innerHeight - r.top) / (r.height + innerHeight * 0.3));
+      cols.forEach((c, i) => { c.style.transform = `translateY(${(1 - smooth(delays[i], delays[i] + 0.5, k)) * 100}%)`; });
+    };
+    const pile = initPile(foot);
+    const tick = () => {
+      rise();
+      if (foot.getBoundingClientRect().top < innerHeight * 0.6) pile.drop();
+    };
+    if (!reduce) typeLoop($('.tw'), t(U.contactLines));
+
+    const mail = $('.foot-mail'), done = $('.copied');
+    let hide;
+    mail.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(C.site.email); } catch (e) { location.href = `mailto:${C.site.email}`; return; }
+      done.textContent = t(U.copied);
+      done.classList.add('on');
+      clearTimeout(hide);
+      hide = setTimeout(() => done.classList.remove('on'), 1600);
+    });
+
+    tick();
+    const prev = onScroll;
+    onScroll = () => { if (prev) prev(); tick(); };
+  }
+
+  /* Écrit une phrase, la rature, l'efface, passe à la suivante. S'arrête seule quand la page change. */
+  async function typeLoop(tw, phrases) {
+    const txt = $('.tw-text', tw);
+    let i = 0;
+    while (tw.isConnected) {
+      const r = tw.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) { await sleep(400); continue; }
+      await sleep(1500);
+      tw.classList.add('struck');
+      await sleep(600);
+      for (let n = txt.textContent.length; n >= 0; n--) { txt.textContent = txt.textContent.slice(0, n); await sleep(20); }
+      tw.classList.remove('struck');
+      await sleep(180);
+      i = (i + 1) % phrases.length;
+      for (const c of phrases[i]) { txt.textContent += c; await sleep(70); }
+    }
+  }
+
+  /* Stickers qui tombent, s'empilent et se lancent */
+  function initPile(foot) {
+    const rots = [-9, 6, -3, 11, -6];
+    const cluster = [0.42, 0.6, 0.5, 0.74, 0.58];
+    const row = [0.03, 0.23, 0.42, 0.62, 0.8];
+    const items = $$('.foot-pile .sticker', foot).map((el, i) => ({ el, i, x: 0, y: 0, vx: 0, vy: 0, rot: rots[i], moving: false, held: false, w: 0, h: 0 }));
+    let W = 0, H = 0, running = false, dropped = false;
+
+    const paint = (it) => { it.el.style.transform = `translate(${it.x}px,${it.y}px) rotate(${it.rot}deg)`; };
+    const size = () => {
+      W = foot.clientWidth; H = foot.clientHeight;
+      items.forEach((it) => { it.w = it.el.offsetWidth; it.h = it.el.offsetHeight; });
+    };
+    const floorOf = (it) => {
+      let f = H - 10;
+      items.forEach((o) => {
+        if (o === it || !o.landed || o.held || o.y < it.y) return;
+        const cover = Math.min(it.x + it.w, o.x + o.w) - Math.max(it.x, o.x);
+        if (cover > it.w * 0.3) f = Math.min(f, o.y + 8);
+      });
+      return f - it.h;
+    };
+    const step = () => {
+      items.forEach((it) => {
+        if (!it.moving || it.held) return;
+        it.vy += 0.9;
+        it.x += it.vx; it.y += it.vy;
+        it.vx *= 0.985;
+        it.rot = Math.max(-28, Math.min(28, it.rot + it.vx * 0.35));
+        if (it.x < 0) { it.x = 0; it.vx *= -0.6; }
+        if (it.x > W - it.w) { it.x = W - it.w; it.vx *= -0.6; }
+        const f = floorOf(it);
+        if (it.y >= f) {
+          it.y = f;
+          it.landed = true;
+          it.vx *= 0.75;
+          if (Math.abs(it.vy) < 4) { it.vy = 0; if (Math.abs(it.vx) < 0.4) it.moving = false; }
+          else it.vy *= -0.36;
+        }
+      });
+    };
+    const run = () => {
+      if (running) return;
+      running = true;
+      (function loop() {
+        if (!foot.isConnected) { running = false; return; }
+        step();
+        items.forEach(paint);
+        if (items.some((it) => it.moving || it.held)) requestAnimationFrame(loop);
+        else running = false;
+      })();
+    };
+    const wake = () => { items.forEach((it) => { it.moving = true; }); run(); };
+
+    size();
+    items.forEach((it) => { it.x = Math.min((W < 700 ? row : cluster)[it.i] * W, W - it.w); it.y = -80 - it.i * 150; paint(it); });
+
+    items.forEach((it) => {
+      it.el.addEventListener('pointerdown', (e) => {
+        it.el.setPointerCapture(e.pointerId);
+        it.el.classList.add('dragging');
+        it.held = true; it.vx = it.vy = 0;
+        const dx = e.clientX - it.x, dy = e.clientY - it.y;
+        let lx = e.clientX, ly = e.clientY;
+        wake();
+        const move = (m) => {
+          it.vx = (m.clientX - lx) * 0.8; it.vy = (m.clientY - ly) * 0.8;
+          lx = m.clientX; ly = m.clientY;
+          it.x = Math.min(Math.max(m.clientX - dx, 0), W - it.w);
+          it.y = m.clientY - dy;
+        };
+        const up = () => {
+          it.el.classList.remove('dragging');
+          it.held = false; it.moving = true;
+          it.vx = Math.max(-30, Math.min(30, it.vx)); it.vy = Math.max(-30, Math.min(30, it.vy));
+          it.el.removeEventListener('pointermove', move);
+          it.el.removeEventListener('pointerup', up);
+          it.el.removeEventListener('pointercancel', up);
+          run();
+        };
+        it.el.addEventListener('pointermove', move);
+        it.el.addEventListener('pointerup', up);
+        it.el.addEventListener('pointercancel', up);
+      });
+    });
+    window.addEventListener('resize', () => {
+      if (!foot.isConnected) return;
+      const ratio = foot.clientWidth / W;
+      size();
+      items.forEach((it) => { it.x = Math.min(it.x * ratio, W - it.w); });
+      if (dropped) wake();
+    });
+
+    return {
+      drop() {
+        if (dropped) return;
+        dropped = true;
+        size();
+        if (reduce) {
+          items.forEach((it) => { it.moving = true; });
+          for (let n = 0; n < 900; n++) step();
+          items.forEach((it) => { it.moving = false; paint(it); });
+          return;
+        }
+        wake();
+      }
+    };
+  }
+
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!onScroll || ticking) return;
@@ -425,7 +600,7 @@
 
   /* ---------- draggable stickers (le côté "explorer") ---------- */
   function initStickers() {
-    $$('.sticker').forEach((el) => {
+    $$('.hero .sticker').forEach((el) => {
       let sx, sy, ox = 0, oy = 0, rot = (/rotate\((-?[\d.]+)deg\)/.exec(el.style.transform) || [0, 0])[1];
       const apply = () => { el.style.transform = `translate(${ox}px,${oy}px) rotate(${rot}deg)`; };
       apply();

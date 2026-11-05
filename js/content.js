@@ -71,6 +71,13 @@ window.C = {
     contactEyebrow: { fr: "Contact", en: "Contact" },
     contactTitle: { fr: "Un projet ?", en: "Got a project?" },
     contactTitle2: { fr: "Parlons-en.", en: "Let's talk." },
+    /* Footer : phrases écrites puis raturées, à tour de rôle */
+    contactLines: {
+      fr: ["Un projet ?", "Un café ?", "Une idée ?", "Un montage ?"],
+      en: ["Got a project?", "A coffee?", "An idea?", "An edit?"]
+    },
+    copy: { fr: "Copier", en: "Copy" },
+    copied: { fr: "Copié !", en: "Copied!" },
     write: { fr: "Écrire", en: "Write" },
     top: { fr: "Haut ↑", en: "Top ↑" },
     rights: { fr: "© 2026 Charles Surleraux", en: "© 2026 Charles Surleraux" }
