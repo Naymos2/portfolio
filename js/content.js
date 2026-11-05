@@ -28,6 +28,7 @@ window.C = {
     },
     hint: { fr: "Attrape-moi", en: "Grab me" },
     scroll: { fr: "Descends me déranger", en: "Scroll to interrupt me" },
+    marquee2: { fr: ["Des gens", "Des métiers", "Des histoires", "Des idées"], en: ["People", "Crafts", "Stories", "Ideas"] },
     /* Intro : la bulle change à chaque photo (dans l'ordre du scroll) */
     intro: [
       { fr: "Chut, je monte.", en: "Shh, I'm editing." },

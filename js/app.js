@@ -85,7 +85,10 @@
           <div class="panel-visual">${visual(p, null, p.cover)}</div>
         </div>
       </a>`).join('');
-    const words = [...U.marquee, ...U.marquee].map((w) => `<span>${w}</span>`).join('');
+    const band = (list, cls, dir) => {
+      const words = Array(4).fill(list).flat().map((w) => `<span>${w}</span>`).join('');
+      return `<div class="marquee ${cls}" data-dir="${dir}" aria-hidden="true"><div class="marquee-track">${words}</div></div>`;
+    };
 
     return `
       <div class="intro" id="intro">
@@ -111,7 +114,7 @@
       </section>
       </div>
 
-      <div class="marquee" aria-hidden="true"><div class="marquee-track">${words}</div></div>
+      ${band(U.marquee, '', 1)}
 
       <section class="statement"><p class="rv">${t(U.statement)}</p></section>
 
@@ -122,6 +125,8 @@
       <div class="stack" id="stack">${panels}</div>
 
       <div class="center"><a class="btn" href="#/projets">${t(U.allProjects)} (${C.projects.length}) →</a></div>
+
+      ${band(t(U.marquee2), 'marquee--tilt', -1)}
 
       <section class="teaser">
         <div class="portrait rv"><img src="${C.site.photo}" alt="${C.site.name}" loading="lazy"></div>
@@ -221,7 +226,7 @@
           <div><dt>${t(U.meta.tools)}</dt><dd>${p.tools}</dd></div>
         </dl>
         <div class="st-intro">${t(S.intro).map((x) => `<p class="rv">${x}</p>`).join('')}</div>
-        <ul class="st-stats">${S.stats.map((x) => `<li class="rv"><b>${x.value}</b>${t(x.label)}</li>`).join('')}</ul>
+        <ul class="st-stats">${S.stats.map((x) => `<li class="rv"><b data-count>${x.value}</b>${t(x.label)}</li>`).join('')}</ul>
         ${chapters}
         <div class="st-closing"><p class="rv">« ${t(S.closing)} »</p><small class="rv">${t(S.closingBy)}</small></div>
         <a class="next" href="#/projet/${nx.slug}" data-cursor="${t(U.cursorView)}">
@@ -291,6 +296,8 @@
     if (route.name === 'projets') initFilters();
     if ($('#st-progress')) initProgress();
     initFooter();
+    initBands();
+    initCounts();
   }
 
   let busy = false;
@@ -428,6 +435,55 @@
     window.addEventListener('resize', () => { if (sec.isConnected) { measure(); update(); } });
     const prev = onScroll;
     onScroll = () => { if (prev) prev(); update(); };
+  }
+
+  /* ---------- bandeaux : ils accélèrent et changent de sens avec le scroll ---------- */
+  function initBands() {
+    const bands = $$('.marquee').map((el) => ({ el, track: el.firstElementChild, dir: Number(el.dataset.dir) || 1, x: 0, slow: 1 }));
+    if (!bands.length || reduce) return;
+    bands.forEach((b) => {
+      b.el.addEventListener('pointerenter', () => { b.slow = 0.25; });
+      b.el.addEventListener('pointerleave', () => { b.slow = 1; });
+    });
+    let last = scrollY, way = 1, boost = 0;
+    (function loop() {
+      if (!bands[0].el.isConnected) return;
+      const v = scrollY - last;
+      last = scrollY;
+      if (v) way = v > 0 ? 1 : -1;
+      boost += (Math.min(Math.abs(v), 90) - boost) * 0.12;
+      bands.forEach((b) => {
+        const half = b.track.scrollWidth / 2;
+        b.x -= (1.1 * b.slow + boost * 0.35) * way * b.dir;
+        if (half) b.x = ((b.x % half) - half) % half;
+        b.track.style.transform = `translate3d(${b.x}px,0,0) skewX(${(-boost * 0.14 * way * b.dir).toFixed(2)}deg)`;
+      });
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  /* ---------- chiffres qui comptent quand ils arrivent à l'écran ---------- */
+  function initCounts() {
+    const els = $$('[data-count]');
+    if (!els.length || reduce) return;
+    const group = (n) => String(n).replace(/\B(?=(\d{3})+$)/g, ' ');
+    const run = (el) => {
+      const final = el.textContent;
+      const m = /^([\d\s]+)(.*)$/.exec(final);
+      if (!m) return;
+      const target = parseInt(m[1].replace(/\s/g, ''), 10);
+      const start = performance.now();
+      const time = target > 100 ? 1800 : 900;
+      (function loop(now) {
+        const k = clamp01((now - start) / time);
+        el.textContent = k < 1 ? group(Math.round(target * (1 - Math.pow(1 - k, 3)))) + m[2] : final;
+        if (k < 1 && el.isConnected) requestAnimationFrame(loop);
+      })(start);
+    };
+    const seen = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting) { seen.unobserve(e.target); run(e.target); }
+    }), { threshold: 0.12 });
+    els.forEach((el) => seen.observe(el));
   }
 
   /* ---------- footer : colonnes, texte raturé, mail, stickers ---------- */

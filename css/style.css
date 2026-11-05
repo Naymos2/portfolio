@@ -142,11 +142,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* ---------- Marquee ---------- */
 .marquee { overflow: hidden; border-block: 1px solid rgba(31, 26, 23, .15); padding: 1.1rem 0; background: var(--ink); color: var(--bg); }
-.marquee-track { display: flex; width: max-content; animation: marq 32s linear infinite; }
-.marquee:hover .marquee-track { animation-play-state: paused; }
+#view { overflow-x: clip; }
+.marquee-track { display: flex; width: max-content; will-change: transform; }
+.marquee--tilt { position: relative; z-index: 2; width: 106vw; margin: clamp(30px, 5vw, 70px) 0 clamp(50px, 7vw, 100px) -3vw; transform: rotate(-2deg); background: var(--honey); color: var(--ink); border: 0; }
+.marquee--tilt .marquee-track span { font-style: italic; }
+.marquee--tilt .marquee-track span::after { color: var(--accent); }
 .marquee-track span { font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 3.4rem); letter-spacing: -.03em; padding-inline: 1.2rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 2.4rem; }
 .marquee-track span::after { content: "✺"; color: var(--honey); font-size: .6em; }
-@keyframes marq { to { transform: translateX(-50%); } }
 
 /* ---------- Statement ---------- */
 .statement { padding: clamp(80px, 14vw, 200px) var(--gut); }
@@ -269,7 +271,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .st-intro p + p { color: var(--muted); font-size: clamp(1.25rem, 2.2vw, 2.1rem); line-height: 1.2; max-width: 38ch; letter-spacing: -.02em; }
 .st-stats { list-style: none; margin: 0 var(--gut); padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); border-block: 1px solid rgba(31, 26, 23, .15); }
 .st-stats li { padding: 1.6rem 1rem 1.6rem 0; color: var(--muted); font-size: .95rem; }
-.st-stats b { display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 5vw, 4.6rem); letter-spacing: -.04em; line-height: 1; color: var(--accent); margin-bottom: .4rem; }
+.st-stats b { font-variant-numeric: tabular-nums; display: block; font-family: var(--serif); font-weight: 500; font-size: clamp(2.2rem, 5vw, 4.6rem); letter-spacing: -.04em; line-height: 1; color: var(--accent); margin-bottom: .4rem; }
 .ch { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 6vw, 100px); align-items: start; padding: clamp(70px, 11vw, 170px) var(--gut) 0; }
 .ch--wide { grid-template-columns: 1fr; }
 .ch:not(.ch--wide) .ch-text { position: sticky; top: 140px; }
