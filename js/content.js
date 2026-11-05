@@ -27,7 +27,23 @@ window.C = {
       en: "Creative & communication. Photo, video and social media: warm content that tells the story of people and crafts."
     },
     hint: { fr: "Attrape-moi", en: "Grab me" },
-    scroll: { fr: "Défiler", en: "Scroll" },
+    scroll: { fr: "Descends me déranger", en: "Scroll to interrupt me" },
+    /* Intro : la bulle change à chaque photo (dans l'ordre du scroll) */
+    intro: [
+      { fr: "Chut, je monte.", en: "Shh, I'm editing." },
+      { fr: "Hein ? Quelqu'un scrolle ?", en: "Wait, is someone scrolling?" },
+      { fr: "Ah. Tu es là depuis longtemps ?", en: "Oh. Been there long?" },
+      { fr: "Salut, moi c'est Charles. Fouille mon bureau !", en: "Hi, I'm Charles. Go on, poke around my desk!" }
+    ],
+    /* Bureau : x et y = position du point sur la photo, en % */
+    desk: [
+      { x: 10, y: 61, label: { fr: "Montage", en: "Editing" }, say: { fr: "Là où tout se joue : le montage.", en: "Where it all happens: the edit." } },
+      { x: 41, y: 50, label: { fr: "Stabilisateur", en: "Gimbal" }, say: { fr: "Pour que l'image ne tremble pas, même quand moi si.", en: "So the shot stays steady, even when I don't." } },
+      { x: 54, y: 53, label: { fr: "Micro", en: "Mic" }, say: { fr: "Une belle image avec un mauvais son, ça ne pardonne pas.", en: "A great shot with bad sound is never forgiven." } },
+      { x: 47, y: 65, label: { fr: "Téléphone", en: "Phone" }, say: { fr: "La caméra que j'ai toujours sur moi.", en: "The camera that's always on me." } },
+      { x: 57, y: 37, label: { fr: "Plante", en: "Plant" }, say: { fr: "La seule à ne jamais demander de modif.", en: "The only one who never asks for changes." } },
+      { x: 9, y: 85, label: { fr: "Café", en: "Coffee" }, say: { fr: "Aucun montage ne se termine sans lui.", en: "No edit gets finished without it." } }
+    ],
     marquee: ["Photo", "Vidéo", "Réseaux sociaux", "Montage", "Print", "Stratégie", "IA"],
     statement: {
       fr: "Je transforme des idées, des savoir-faire et des visages en contenus qui donnent envie : photos, vidéos, posts et supports print.",

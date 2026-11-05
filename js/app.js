@@ -75,18 +75,28 @@
     const words = [...U.marquee, ...U.marquee].map((w) => `<span>${w}</span>`).join('');
 
     return `
+      <div class="intro" id="intro">
       <section class="hero" id="hero">
-        <div class="hero-photo rv" style="--d:.5s"><img src="${C.site.photo}" alt="${C.site.name}"></div>
+        <div class="hero-photo" id="hero-photo">
+          <div class="hero-card rv" style="--d:.5s">
+            <div class="hero-frames">
+              ${[1, 2, 3, 4].map((n) => `<img class="frame" src="assets/intro/${n}.webp" alt="${n === 4 ? C.site.name : ''}" decoding="async">`).join('')}
+            </div>
+            ${U.desk.map((d, i) => `<button class="spot" style="left:${d.x}%;top:${d.y}%" data-i="${i}" data-cursor="${t(d.label)}" aria-label="${t(d.label)} : ${t(d.say)}"></button>`).join('')}
+            <p class="bubble" id="bubble"><span></span></p>
+          </div>
+        </div>
         <h1 class="mega name" id="name">${ln('Charles', .1)}${ln('Surleraux', .22)}</h1>
         <p class="hero-sub rv" style="--d:.7s">${t(U.heroSub)}</p>
         <span class="sticker-hint rv" style="left:9%;top:17.5%;--d:1.2s">${t(U.hint)}</span>
         <button class="sticker s-terracotta" style="left:6%;top:24%;transform:rotate(-8deg)" data-cursor="${t(U.cursorDrag)}">Photo</button>
         <button class="sticker s-honey" style="left:34%;top:19%;transform:rotate(5deg)" data-cursor="${t(U.cursorDrag)}">Vidéo</button>
-        <button class="sticker" style="left:20%;top:48%;transform:rotate(-3deg)" data-cursor="${t(U.cursorDrag)}">Social</button>
-        <button class="sticker s-sage" style="left:46%;top:42%;transform:rotate(9deg)" data-cursor="${t(U.cursorDrag)}">Print</button>
-        <button class="sticker s-honey" style="left:60%;top:30%;transform:rotate(-6deg)" data-cursor="${t(U.cursorDrag)}">IA ✺</button>
+        <button class="sticker" style="left:21%;top:27%;transform:rotate(-3deg)" data-cursor="${t(U.cursorDrag)}">Social</button>
+        <button class="sticker s-sage" style="left:45%;top:29%;transform:rotate(9deg)" data-cursor="${t(U.cursorDrag)}">Print</button>
+        <button class="sticker s-honey" style="left:23%;top:15%;transform:rotate(-6deg)" data-cursor="${t(U.cursorDrag)}">IA ✺</button>
         <span class="scroll-hint">${t(U.scroll)}</span>
       </section>
+      </div>
 
       <div class="marquee" aria-hidden="true"><div class="marquee-track">${words}</div></div>
 
@@ -264,7 +274,7 @@
     document.title = p ? `${t(p.title)} — ${C.site.name}` : titles[route.name] ? `${t(titles[route.name])} — ${C.site.name}` : `${C.site.name} — ${lang === 'fr' ? 'Créatif & communication' : 'Creative & communication'}`;
     onScroll = null;
     initReveal();
-    if (route.name === '') { initStickers(); initStack(); requestAnimationFrame(() => $('#name') && $('#name').classList.add('in')); }
+    if (route.name === '') { initStickers(); initStack(); initIntro(); requestAnimationFrame(() => $('#name') && $('#name').classList.add('in')); }
     if (route.name === 'projets') initFilters();
     if ($('#st-progress')) initProgress();
   }
@@ -339,6 +349,73 @@
     };
     onScroll();
   }
+  /* ---------- intro : je me retourne quand on scrolle ---------- */
+  const clamp01 = (x) => Math.min(1, Math.max(0, x));
+  const smooth = (a, b, x) => { const k = clamp01((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+  function initIntro() {
+    const sec = $('#intro');
+    if (!sec) return;
+    const hero = $('#hero'), photo = $('#hero-photo'), name = $('#name'), hint = $('.scroll-hint');
+    const frames = $$('.frame'), lines = $$('.ln', name), spots = $$('.spot');
+    const bubble = $('#bubble span');
+    const fades = [[0.18, 0.26], [0.40, 0.48], [0.62, 0.70]];
+    let geo = {}, step = -1, active = null;
+
+    const say = (text) => {
+      if (bubble.textContent === text) return;
+      bubble.textContent = text;
+      bubble.classList.remove('pop');
+      void bubble.offsetWidth;
+      bubble.classList.add('pop');
+    };
+    const measure = () => {
+      const [a, b] = lines.map((l) => l.firstElementChild);
+      const textW = Math.max(a.offsetWidth, b.offsetWidth);
+      const room = photo.offsetLeft - name.offsetLeft - 24;
+      geo = { wide: innerWidth > 800, shift: b.offsetLeft - a.offsetLeft, end: Math.min(0.62, room / textW) };
+    };
+    const update = () => {
+      const max = sec.offsetHeight - innerHeight;
+      const p = reduce || max <= 0 ? 1 : clamp01(-sec.getBoundingClientRect().top / max);
+      const e = smooth(0, 0.55, p);
+      const s = geo.wide ? 0.5 + 0.5 * e : 0.82 + 0.18 * e;
+      const tx = geo.wide ? -(1 - e) * innerWidth * 0.07 : 0;
+      photo.style.transform = `translateX(${tx}px) scale(${s}) rotate(${3 * (1 - e)}deg)`;
+      photo.style.setProperty('--inv', 1 / s);
+      name.style.transform = geo.wide ? `scale(${1 + (geo.end - 1) * e})` : '';
+      lines[1].style.transform = geo.wide ? `translateX(${-geo.shift * e}px)` : '';
+      fades.forEach(([a, b], i) => { frames[i + 1].style.opacity = smooth(a, b, p); });
+      hint.style.opacity = 1 - smooth(0.02, 0.1, p);
+      const desk = p > 0.72;
+      hero.classList.toggle('desk', desk);
+      hero.classList.toggle('past', p > 0.08);
+      if (!desk) active = null;
+      step = p < 0.22 ? 0 : p < 0.44 ? 1 : p < 0.66 ? 2 : 3;
+      say(t(active !== null ? U.desk[active].say : U.intro[step]));
+    };
+
+    const pick = (i) => {
+      active = i;
+      spots.forEach((b, k) => b.classList.toggle('on', k === i));
+      say(t(i !== null ? U.desk[i].say : U.intro[step]));
+    };
+    spots.forEach((b, i) => {
+      b.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') pick(i); });
+      b.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') pick(null); });
+      b.addEventListener('focus', () => pick(i));
+      b.addEventListener('blur', () => pick(null));
+      b.addEventListener('click', (e) => { e.stopPropagation(); pick(i); });
+    });
+    hero.addEventListener('click', () => { if (active !== null) pick(null); });
+
+    measure();
+    update();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (sec.isConnected) { measure(); update(); } });
+    window.addEventListener('resize', () => { if (sec.isConnected) { measure(); update(); } });
+    const prev = onScroll;
+    onScroll = () => { if (prev) prev(); update(); };
+  }
+
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!onScroll || ticking) return;

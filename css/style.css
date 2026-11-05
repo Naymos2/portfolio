@@ -74,13 +74,59 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .in .ln > span, .ln.in > span { transform: none; }
 
 /* ---------- Hero ---------- */
-.hero { position: relative; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 110px var(--gut) 40px; overflow: hidden; }
+.intro { position: relative; height: 340svh; }
+.hero { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: flex-end; padding: 110px var(--gut) 40px; overflow: hidden; }
 .hero .eyebrow { position: absolute; top: 96px; left: var(--gut); }
-.name { font-size: clamp(3.6rem, 16.5vw, 17rem); position: relative; z-index: 2; }
-.name .ln:nth-child(2) { text-align: right; }
-.hero-photo { position: absolute; z-index: 1; right: clamp(16px, 9vw, 150px); top: clamp(110px, 12vh, 150px); width: clamp(150px, 23vw, 360px); aspect-ratio: 4 / 5; border-radius: 999px 999px 24px 24px; overflow: hidden; background: var(--bg2); transform: rotate(3deg); box-shadow: 0 30px 60px -30px rgba(31, 26, 23, .45); }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
-.hero-sub { position: relative; z-index: 2; max-width: 30rem; margin: 1.6rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.3vw, 1.25rem); }
+.name { font-size: clamp(3.6rem, 16.5vw, 17rem); position: relative; z-index: 2; transform-origin: 0 100%; will-change: transform; pointer-events: none; }
+.name .ln > span { width: max-content; }
+.name .ln:nth-child(2) > span { margin-left: auto; }
+/* La photo fait sa taille finale en CSS ; le JS la réduit au départ, pour rester nette à l'arrivée. */
+.hero-photo { --ph: min(calc(100svh - 96px), 61vw); position: absolute; z-index: 1; right: var(--gut); top: 76px; height: var(--ph); aspect-ratio: 3 / 4; transform-origin: 100% 0; will-change: transform; }
+.hero-card { position: relative; width: 100%; height: 100%; }
+.hero-frames { position: absolute; inset: 0; border-radius: 999px 999px 24px 24px; overflow: hidden; background: var(--bg2); box-shadow: 0 30px 60px -30px rgba(31, 26, 23, .45); }
+.frame { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.frame:first-child { opacity: 1; }
+.hero-sub { position: relative; z-index: 2; max-width: min(30rem, 38vw); margin: 1.6rem 0 0; color: var(--muted); font-size: clamp(1rem, 1.3vw, 1.25rem); }
+
+/* Bulle : garde la même taille à l'écran quelle que soit l'échelle de la photo (--inv) */
+.bubble { position: absolute; z-index: 3; right: 44%; top: 11%; width: max-content; max-width: 15rem; margin: 0; transform: scale(var(--inv, 1)); transform-origin: 100% 0; pointer-events: none; }
+.bubble span { position: relative; display: block; padding: .6rem 1rem; border-radius: 18px; background: var(--bg); border: 1.5px solid var(--ink); box-shadow: 0 5px 0 -1px var(--ink); font-family: var(--serif); font-style: italic; font-size: clamp(.95rem, 1.2vw, 1.15rem); line-height: 1.25; }
+.bubble span::after { content: ""; position: absolute; right: -8px; top: 16px; width: 13px; height: 13px; background: var(--bg); border-top: 1.5px solid var(--ink); border-right: 1.5px solid var(--ink); transform: rotate(45deg); }
+.bubble span.pop { animation: pop .38s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { from { transform: scale(.8) rotate(-2deg); opacity: 0; } }
+
+/* Points à survoler sur le bureau */
+.spot { position: absolute; z-index: 2; width: 36px; height: 36px; margin: -18px 0 0 -18px; border-radius: 50%; display: grid; place-items: center; visibility: hidden; opacity: 0; transform: scale(.4); transition: opacity .35s, transform .35s cubic-bezier(.3, 1.6, .5, 1), visibility .35s; }
+.spot::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 2px 8px rgba(31, 26, 23, .4); transition: transform .25s var(--ease); }
+.spot::after { content: ""; position: absolute; inset: 7px; border-radius: 50%; border: 2px solid var(--bg); animation: ring 2.2s ease-out infinite; }
+@keyframes ring { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
+.spot.on::before { transform: scale(1.5); background: var(--honey); }
+.hero.desk .spot { visibility: visible; opacity: 1; transform: none; }
+.hero.desk .spot:nth-of-type(2) { transition-delay: .05s; }
+.hero.desk .spot:nth-of-type(3) { transition-delay: .1s; }
+.hero.desk .spot:nth-of-type(4) { transition-delay: .15s; }
+.hero.desk .spot:nth-of-type(5) { transition-delay: .2s; }
+.hero.desk .spot:nth-of-type(6) { transition-delay: .25s; }
+
+@media (max-width: 800px) {
+  .intro { height: 300svh; }
+  .hero { padding-bottom: 28px; }
+  .hero-photo { --ph: min(calc(100svh - 330px), calc((100vw - 32px) * 4 / 3)); right: auto; left: 50%; margin-left: calc(var(--ph) * -.375); top: 72px; transform-origin: 50% 0; }
+  .hero-sub { max-width: 30rem; }
+  .bubble { max-width: 10.5rem; }
+  .bubble span { padding: .45rem .75rem; font-size: .88rem; }
+  /* Sur téléphone, les stickers vivent entre la photo et le nom, puis s'effacent pour laisser la photo grandir. */
+  .sticker-hint { display: none; }
+  .sticker { transition: opacity .3s; }
+  .hero.past .sticker { opacity: 0; pointer-events: none; }
+  .sticker:nth-of-type(odd) { top: auto !important; bottom: 296px; }
+  .sticker:nth-of-type(even) { top: auto !important; bottom: 268px; }
+  .sticker:nth-of-type(1) { left: 4% !important; }
+  .sticker:nth-of-type(2) { left: 25% !important; }
+  .sticker:nth-of-type(3) { left: 45% !important; }
+  .sticker:nth-of-type(4) { left: 63% !important; }
+  .sticker:nth-of-type(5) { left: 80% !important; }
+}
 .scroll-hint { position: absolute; right: var(--gut); bottom: 46px; z-index: 2; font-size: .75rem; letter-spacing: .14em; text-transform: uppercase; display: none; align-items: center; gap: .6rem; }
 .scroll-hint::after { content: ""; width: 1px; height: 40px; background: var(--ink); animation: drip 2s var(--ease) infinite; transform-origin: top; }
 @keyframes drip { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
@@ -287,4 +333,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .rv, .ln > span { opacity: 1; transform: none; }
+  .intro { height: auto; }
+  .hero { position: relative; }
 }
